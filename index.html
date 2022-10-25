@@ -1,9 +1,60 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-  <head>
-    
-  </head>
+  <head></head>
+
   <body>
-    
+    <button id="nfc-btn" type="button" disabled>Start</button>
+
+    <ul id="serials"></ul>
+
+    <script>
+      /*window["fully"] = {
+        nfcScanStart: () => {
+          console.log("fully", "nfcScanStart");
+          return true;
+        },
+        nfcScanStop: () => {
+          console.log("fully", "nfcScanStop");
+          return true;
+        },
+
+        bind: (name, code) => {
+          console.log("fully", { eventName: name, code });
+        },
+      };*/
+    </script>
+
+    <script>
+      const state = {
+        isFullyBrowser: false,
+        isRunning: false,
+      };
+
+      state.isFullyBrowser = window["fully"] != undefined; // Recordar activar la opción de inyectar JS en la app
+
+      const nfcBtn = document.getElementById("nfc-btn");
+      if (state.isFullyBrowser && nfcBtn) {
+        nfcBtn.removeAttribute("disabled");
+
+        window["fully"].bind("onNdefDiscovered", 'addItem("$serial");');
+        nfcBtn.addEventListener("click", function () {
+          if (state.isRunning) {
+            state.isRunning = window["fully"].nfcScanStop();
+          } else {
+            state.isRunning = window["fully"].nfcScanStart();
+          }
+
+          nfcBtn.textContent = state.isRunning ? "Stop" : "Start";
+        });
+      }
+
+      function addItem(content) {
+        const ul = document.getElementById("serials");
+        const li = document.createElement("li");
+
+        li.appendChild(document.createTextNode(content));
+        ul.appendChild(li);
+      }
+    </script>
   </body>
 </html>
