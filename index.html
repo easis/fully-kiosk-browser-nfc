@@ -27,6 +27,7 @@
 
     <script>
       function addItem(content) {
+        content = parseInt(content.replaceAll(':', ''), 16).toString();
         console.log('addItem', content);
 
         const ul = document.getElementById("serials");
